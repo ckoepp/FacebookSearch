@@ -57,7 +57,7 @@ class FacebookSearchOrder(object):
 
         if distance:
                 self.__parameters['distance'] = '%s' % distance
-        else:
+        elif self.__parameters.get('distance'):
             del self.__parameters['distance']
 
         self.__parameters['type'] = search_type

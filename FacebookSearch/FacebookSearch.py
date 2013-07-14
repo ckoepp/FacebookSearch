@@ -69,14 +69,19 @@ class FacebookSearch(object):
             # json error returned? Raise exception
             if not self.__response.get('error'):
                 return self.__response
+
             else:
-                raise FacebookSearchException(self.__response['error']['code'], "%s: %s" % (self.__response['error']['type'], self.__response['error']['message']))
+                # ...and sometimes there is even no error code at all included in error messages *double d'oh*
+                code = 0 if not self.__response['error'].get('code') else self.__response['error']['code']
+
+                raise FacebookSearchException(code, "%s: %s" % (self.__response['error']['type'], self.__response['error']['message']))
 
         except Exception as e:
 
             # re-raise exception if it was raised because of an json error returned by Graph API
             if isinstance(e, FacebookSearchException):
                 raise e
+            print(r.text)
             self.__response = r.text
             return self.__response
 
