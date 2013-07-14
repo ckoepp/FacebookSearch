@@ -81,7 +81,6 @@ class FacebookSearch(object):
             # re-raise exception if it was raised because of an json error returned by Graph API
             if isinstance(e, FacebookSearchException):
                 raise e
-            print(r.text)
             self.__response = r.text
             return self.__response
 
