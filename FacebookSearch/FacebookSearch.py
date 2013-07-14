@@ -23,9 +23,9 @@ class FacebookSearch(object):
 
     def __init__(self, client_id = None, client_secret = None, access_token = None, verify=True):
         """ Constructor """
-        if isinstance(client_secret, basestring if py3k else str) and isinstance(client_id, basestring if py3k else str):
+        if isinstance(client_secret, str if py3k else basestring) and isinstance(client_id, str if py3k else basestring):
             self.__access_token = self.queryAccessToken(client_id, client_secret)
-        elif isinstance(access_token, basestring if py3k else str):
+        elif isinstance(access_token, str if py3k else basestring):
             self.__access_token = access_token
             if verify:
                 self.validateAccessToken(self.__access_token)
