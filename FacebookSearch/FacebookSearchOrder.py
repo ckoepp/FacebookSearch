@@ -1,4 +1,5 @@
 from .FacebookSearchException import FacebookSearchException
+from .utils import py3k
 
 try: from urllib.parse import parse_qs, quote_plus, unquote # python3
 except ImportError: from urlparse import parse_qs; from urllib import quote_plus, unquote #python2
