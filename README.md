@@ -9,10 +9,10 @@ However, if you would like to have a glimpse this is what you've got to do:
 from FacebookSearch import *
 import pprint
 
-fbo = FacebookSearchOrder()
-fbo.setKeywords('NSA')
-
 try:
+    fbo = FacebookSearchOrder()
+    fbo.setKeywords('NSA')
+
     fb = FacebookSearch(client_id='123', client_secret='I_really_do_like_spiderman_undies')
     # or even: FacebookSearch(access_code='NoNeedToCreateOne')
 
