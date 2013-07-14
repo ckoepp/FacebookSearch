@@ -23,9 +23,9 @@ class FacebookSearchOrder(object):
         querystr += '+'.join(args)
 
         # included fields
-        if len(self.__field) > 0:
+        if len(self.__fields) > 0:
             querystr += '&fields='
-            querystr += ','.join(self.__field)
+            querystr += ','.join(self.__fields)
 
         # additional arguments
         for key, value in self.__parameters.items():
