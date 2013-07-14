@@ -80,6 +80,7 @@ class FacebookSearch(object):
     def searchGraphIterable(self, order):
         """ Starts an iterable search through a given FacebookSearchOrder object and returns itself """
         self.searchGraph(order)
+        print(self.__response['paging'])
         return self
 
 
@@ -100,5 +101,3 @@ class FacebookSearch(object):
             return self.__response['data'][self.__nxt-1]
         else:
             raise StopIteration
-
-

@@ -8,3 +8,23 @@ from .FacebookSearch import FacebookSearch
 from .FacebookSearchOrder import FacebookSearchOrder
 from .FacebookSearchException import FacebookSearchException
 from .utils import py3k
+
+# ToDo
+class SEARCH_TYPES(type):
+    _types = {
+            'POST'     : 'post',
+            'USER'     : 'user',
+            'PAGE'     : 'page',
+            'EVENT'    : 'event',
+            'GROUP'    : 'group',
+            'PLACE'    : 'place',
+            'CHECKIN'  : 'checkin',
+            'LOCATION' : 'location',
+        }
+
+    def __getattr__(cls, key):
+        print "Halllo"
+        if key in self._types.keys():
+            return self._types[key.upper()]
+        else:
+            raise AttributeError(key)
