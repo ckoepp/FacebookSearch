@@ -7,8 +7,8 @@ except ImportError: from urlparse import parse_qs; from urllib import quote_plus
 class FacebookSearchOrder(object):
     def __init__(self):
         self.__keywords = []
-        self.__paramters = {}
-        self.__paramters.update({ 'limit' : '500' })
+        self.__parameters = {}
+        self.__parameters.update({ 'limit' : '500' })
         self.__fields = {}
 
     def createSearchQuery(self):
