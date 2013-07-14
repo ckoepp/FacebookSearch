@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from .FacebookSearchOrder import FacebookSearchOrder
 from .FacebookSearchException import FacebookSearchException
 from .utils import py3k
@@ -5,14 +7,21 @@ from .utils import py3k
 import requests
 
 class FacebookSearch(object):
+    """
+    This class actually performs querys to the Facebook Graph API
+    """
+
     _base_url = 'https://graph.facebook.com/'
     _generate_token_url = _base_url + 'oauth/access_token'
     _verify_url = _base_url + 'app?fields=id'
     _search_url = _base_url + 'search'
 
-
     exceptions = {
             400 : "The request could not be fulfilled",
+            }
+
+    fb_exceptions =  {
+            100: "Test",
             }
 
     def __init__(self, client_id = None, client_secret = None, access_token = None, verify=True):
@@ -66,10 +75,17 @@ class FacebookSearch(object):
     def validateAccessToken(self, token):
         """ Validates a given access token against Facebook Graph. Returns True in case of success or False in other cases """
         response = self.sendQuery(self._verify_url + '&access_token=%s' %  token, json=True)
+
+        # User Token
+        if not token.find('|'):
+            if response['id'].isdigit():
+                return True
+            return False
+
+        # App Token
         if self.__access_token[0:len(response['id'])] == response['id']:
             return True
-        else:
-            return False
+        return False
 
     def searchGraph(self, order):
         """ Creates a query string through a given FacebookSearchOrder object and sends a query to Facebook Graph """
@@ -80,7 +96,6 @@ class FacebookSearch(object):
     def searchGraphIterable(self, order):
         """ Starts an iterable search through a given FacebookSearchOrder object and returns itself """
         self.searchGraph(order)
-        print(self.__response['paging'])
         return self
 
 

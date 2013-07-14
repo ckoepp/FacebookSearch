@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 __title__ = 'FacebookSearch'
 __version__ = '0.0.1'
 __author__ = 'Christian Koepp, Norbert Wiedermann'

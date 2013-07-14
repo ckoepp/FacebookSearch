@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from .FacebookSearchException import FacebookSearchException
 from .utils import py3k
 
@@ -5,6 +7,10 @@ try: from urllib.parse import parse_qs, quote_plus, unquote # python3
 except ImportError: from urlparse import parse_qs; from urllib import quote_plus, unquote #python2
 
 class FacebookSearchOrder(object):
+    """
+    This class configures all currently available paramters of a search query with the Facebook Graph API
+    """
+
     def __init__(self):
         self.__keywords = []
         self.__parameters = {}
@@ -54,6 +60,13 @@ class FacebookSearchOrder(object):
 
         self.__parameters['type'] = search_type
         self.__parameters['center'] = "%s,%s" % (lat, lon)
+
+    def setLimit(self, limit):
+        """ Sets the amout of returned records by Graph API """
+        if isinstance(limit, int if py3k else (long, int)):
+            self.__parameters['limit'] = '%s' % limit
+        else:
+            return FacebookSearchException(1007)
 
     def setPlaceID(self, place_id):
         """ Sets a given place_id as paramater """

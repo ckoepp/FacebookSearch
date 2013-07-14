@@ -1,4 +1,9 @@
+# -*- coding: utf-8 -*-
+
 class FacebookSearchException(Exception):
+    """
+    This Exception-based class is raised in case of an error within FacebookSearch
+    """
 
     _error_codes = {
             1000 : "No access token or no client ID/secret tuple found",
