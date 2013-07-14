@@ -52,7 +52,7 @@ class FacebookSearchOrder(object):
             raise FacebookSearchException(1005)
         if not isinstance(lat, float) and isinstance(lon, float):
             raise FacebookSearchException(1006)
-        if not isinstance(distance, int if py3k else (long, int)):
+        if distance and not isinstance(distance, int if py3k else (long, int)):
             raise FacebookSearchException(1007)
 
         if distance:
