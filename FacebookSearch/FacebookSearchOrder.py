@@ -41,14 +41,14 @@ class FacebookSearchOrder(object):
 
     def setSearchType(self, search_type):
         """ Sets a search type """
-        if isinstance(search_type, basestring if py3k else str):
+        if isinstance(search_type, str if py3k else basestring):
             self.__parameters['type'] = search_type
         else:
             raise FacebookSearchException(1005)
 
     def setGeolocationType(self, search_type, lat, lon, distance=None):
         """ Sets a type containing a geolocation and an optional distance parameter """
-        if not isinstance(search_type, basestring if py3k else str):
+        if not isinstance(search_type, str if py3k else basestring):
             raise FacebookSearchException(1005)
         if not isinstance(lat, float) and isinstance(lon, float):
             raise FacebookSearchException(1006)
@@ -77,7 +77,7 @@ class FacebookSearchOrder(object):
 
     def setIncludedFields(self, fields):
         """ Sets given list or string of fields to be exclusivly included in response """
-        if isinstance(fields, basestring if py3k else str):
+        if isinstance(fields, str if py3k else basestring):
             self.__fields = [ fields ]
         elif isinstance(fields, list):
             self.__fields = fields
@@ -86,7 +86,7 @@ class FacebookSearchOrder(object):
 
     def addIncludedFields(self, fields):
         """ Adds given list or string of fields to be exclusivly included in response """
-        if isinstance(fields, basestring if py3k else str):
+        if isinstance(fields, str if py3k else basestring):
             self.__fields.append(fields)
         elif isinstance(fields, list):
             self.__fields += fields
@@ -95,7 +95,7 @@ class FacebookSearchOrder(object):
 
     def setKeywords(self, words):
         """ Sets given list or string of fields as keywords """
-        if isinstance(words, basestring if py3k else str):
+        if isinstance(words, str if py3k else basestring):
             self.__keywords = [ words ]
         elif isinstance(words, list):
             self.__keywords = words
@@ -104,7 +104,7 @@ class FacebookSearchOrder(object):
 
     def addKeywords(self, words):
         """ Adds given list or string of fields to keywords """
-        if isinstance(words, basestring if py3k else str):
+        if isinstance(words, str if py3k else basestring):
             self.__keywords.append(words)
         elif isinstance(words, list):
             self.__keywords += words

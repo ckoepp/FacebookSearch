@@ -25,7 +25,6 @@ class SEARCH_TYPES(type):
         }
 
     def __getattr__(cls, key):
-        print "Halllo"
         if key in self._types.keys():
             return self._types[key.upper()]
         else:
