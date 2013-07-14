@@ -1,5 +1,5 @@
 # FacebookSearch
-[![Downloads](https://pypip.in/d/FacebookSearch/badge.png)](https://crate.io/packages/FacebookSearch/) [![PyPI version](https://pypip.in/v/FacebookSearch/badge.png)](https://crate.io/packages/FacebookSearch/)
+[![Build](https://api.travis-ci.org/ckoepp/FacebookSearch.png?branch=master)](https://travis-ci.org/ckoepp/FacebookSearch/branches) [![Downloads](https://pypip.in/d/FacebookSearch/badge.png)](https://crate.io/packages/FacebookSearch/) [![PyPI version](https://pypip.in/v/FacebookSearch/badge.png)](https://crate.io/packages/FacebookSearch/)
 
 This library is in a very early stage of development and due to this there no documentation available (besides the source itself :p).
 
