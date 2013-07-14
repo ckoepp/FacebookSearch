@@ -16,12 +16,9 @@ class FacebookSearch(object):
     _verify_url = _base_url + 'app?fields=id'
     _search_url = _base_url + 'search'
 
+    # HTTP error codes do exist but are not documented by Facebook *doh*
     exceptions = {
             400 : "The request could not be fulfilled",
-            }
-
-    fb_exceptions =  {
-            100: "Test",
             }
 
     def __init__(self, client_id = None, client_secret = None, access_token = None, verify=True):
@@ -55,7 +52,7 @@ class FacebookSearch(object):
         """ Returns the full response of last query """
         return self.__response
 
-    def sendQuery(self, query, json=False):
+    def sendQuery(self, query):
         """ Sends a given query and returns response either as json-parsed dict or string """
         r = requests.get(query)
 
@@ -65,19 +62,30 @@ class FacebookSearch(object):
 
         self.__headers = r.headers
 
-        if json:
+        # Again: DON'T ASK - Graph should be a RESTful API but access-tokens are returned as non-json objects for example *d'oh*
+        try:
             self.__response = r.json()
-            return self.__response
-        else:
+
+            # json error returned? Raise exception
+            if not self.__response.get('error'):
+                return self.__response
+            else:
+                raise FacebookSearchException(self.__response['error']['code'], "%s: %s" % (self.__response['error']['type'], self.__response['error']['message']))
+
+        except Exception as e:
+
+            # re-raise exception if it was raised because of an json error returned by Graph API
+            if isinstance(e, FacebookSearchException):
+                raise e
             self.__response = r.text
             return self.__response
 
     def validateAccessToken(self, token):
         """ Validates a given access token against Facebook Graph. Returns True in case of success or False in other cases """
-        response = self.sendQuery(self._verify_url + '&access_token=%s' %  token, json=True)
+        response = self.sendQuery(self._verify_url + '&access_token=%s' %  token)
 
         # User Token
-        if not token.find('|'):
+        if token.find('|') < 0:
             if response['id'].isdigit():
                 return True
             return False
@@ -91,7 +99,7 @@ class FacebookSearch(object):
         """ Creates a query string through a given FacebookSearchOrder object and sends a query to Facebook Graph """
         if not isinstance(order, FacebookSearchOrder):
             raise FacebookSearchException(1002)
-        return self.sendQuery(self._search_url + order.createSearchQuery() + '&access_token=%s' % self.__access_token, json=True)
+        return self.sendQuery(self._search_url + order.createSearchQuery() + '&access_token=%s' % self.__access_token)
 
     def searchGraphIterable(self, order):
         """ Starts an iterable search through a given FacebookSearchOrder object and returns itself """
@@ -103,7 +111,7 @@ class FacebookSearch(object):
     def __iter__(self):
         if not self.__response:
             raise FacebookSearchException(1003)
-        self.__nxt = 0
+        self.__nextObject = 0
         return self
 
     def next(self):
@@ -111,8 +119,8 @@ class FacebookSearch(object):
         return self.__next__()
 
     def __next__(self):
-        if self.__nxt < len(self.__response['data']):
-            self.__nxt += 1
-            return self.__response['data'][self.__nxt-1]
+        if self.__nextObject < len(self.__response['data']):
+            self.__nextObject += 1
+            return self.__response['data'][self.__nextObject-1]
         else:
             raise StopIteration
