@@ -52,11 +52,13 @@ class FacebookSearchOrder(object):
             raise FacebookSearchException(1005)
         if not isinstance(lat, float) and isinstance(lon, float):
             raise FacebookSearchException(1006)
-        if distance and not isinstance(distance, int if py3k else (long, int)):
+        if not isinstance(distance, int if py3k else (long, int)):
             raise FacebookSearchException(1007)
 
         if distance:
                 self.__parameters['distance'] = '%s' % distance
+        else:
+            del self.__parameters['distance']
 
         self.__parameters['type'] = search_type
         self.__parameters['center'] = "%s,%s" % (lat, lon)
