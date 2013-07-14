@@ -1,4 +1,5 @@
 from .FacebookSearchException import FacebookSearchException
 
 class FacebookSearchOrder(object):
-    pass
+    def createSearchQuery(self):
+        return '?q=Heidelberg&type=post'
