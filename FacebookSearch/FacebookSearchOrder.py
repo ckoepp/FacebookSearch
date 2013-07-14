@@ -73,7 +73,7 @@ class FacebookSearchOrder(object):
     def setPlaceID(self, place_id):
         """ Sets a given place_id as paramater """
         if isinstance(place_id, int if py3k else (long, int)):
-            self.__paramters['place'] = '%s' % place_id
+            self.__parameters['place'] = '%s' % place_id
         else:
             raise FacebookSearchException(1007)
 
