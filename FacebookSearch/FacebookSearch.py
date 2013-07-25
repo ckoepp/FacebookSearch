@@ -3,8 +3,10 @@
 from .FacebookSearchOrder import FacebookSearchOrder
 from .FacebookSearchException import FacebookSearchException
 from .utils import py3k
-
 import requests
+
+try: from urllib.parse import parse_qs # python3
+except ImportError: from urlparse import parse_qs # python2
 
 class FacebookSearch(object):
     """
@@ -34,10 +36,12 @@ class FacebookSearch(object):
 
         self.__headers = None
         self.__response = None
+        self.__last_query = None
+        self.__query = None
 
     def queryAccessToken(self, client_id, client_secret):
         """ Tries to fetch and return an access token by transmitting a client's ID and secret to Fracebook Graph """
-        response = self.sendQuery(self._generate_token_url + '?client_id=%s&client_secret=%s&grant_type=client_credentials' % (client_id, client_secret))
+        response = self.sendQuery(self._generate_token_url + '?client_id=%s&client_secret=%s&grant_type=client_credentials' % (client_id, client_secret), addToken=False)
         args = response.split('=')
         if args[0] == 'access_token':
             return args[1]
@@ -52,10 +56,17 @@ class FacebookSearch(object):
         """ Returns the full response of last query """
         return self.__response
 
-    def sendQuery(self, query):
-        """ Sends a given query and returns response either as json-parsed dict or string """
-        r = requests.get(query)
+    def getLastQuery(self):
+        """ Returns last query string passed to the Graph API """
 
+    def sendQuery(self, query, addToken=True):
+        """ Adds a token if needed to a given query and returns response either as json-parsed dict or string """
+        self.__last_query = query
+
+        if addToken:
+            self.__last_query += '&access_token=%s' % self.__access_token
+
+        r = requests.get(self.__last_query)
         status = r.status_code
         if status in self.exceptions:
             raise FacebookSearchException(status, self.exceptions[status])
@@ -78,7 +89,7 @@ class FacebookSearch(object):
 
         except Exception as e:
 
-            # re-raise exception if it was raised because of an json error returned by Graph API
+            # re-raise exception as one of ours, if it was raised because of an json error returned by Graph API
             if isinstance(e, FacebookSearchException):
                 raise e
             self.__response = r.text
@@ -100,15 +111,22 @@ class FacebookSearch(object):
         return False
 
     def searchGraph(self, order):
-        """ Creates a query string through a given FacebookSearchOrder object and sends a query to Facebook Graph """
+        """ Creates a query string through a given FacebookSearchOrder object and sends a query to Facebook Graph with added postfix string """
         if not isinstance(order, FacebookSearchOrder):
             raise FacebookSearchException(1002)
-        return self.sendQuery(self._search_url + order.createSearchQuery() + '&access_token=%s' % self.__access_token)
+        self.__query = order.createSearchQuery()
+        return self.sendQuery(self._search_url + self.__query)
 
     def searchGraphIterable(self, order):
         """ Starts an iterable search through a given FacebookSearchOrder object and returns itself """
         self.searchGraph(order)
         return self
+
+    def isPreviousPage(self):
+        """ Returns true in case there are more results within Graph API or false if there aren't """
+        if self.__response['paging'].get('previous'):
+            return True
+        return False
 
 
     # Iterator
@@ -126,5 +144,21 @@ class FacebookSearch(object):
         if self.__nextObject < len(self.__response['data']):
             self.__nextObject += 1
             return self.__response['data'][self.__nextObject-1]
+
+        elif self.isPreviousPage():
+            # Graph Search only supports time-based pagination - don't ask me why
+            # see: https://developers.facebook.com/docs/reference/api/pagination/
+
+            # empty results? FB got it all - it's horrible...
+            # see: https://developers.facebook.com/blog/post/478/
+            while True:
+                last_ts = parse_qs(self.__response['paging']['next'])['until'][0]
+                self.sendQuery(self._search_url + self.__query + '&until=%s' % last_ts)
+                if len(self.__response['data']) > 0:
+                     break
+
+            self.__nextObject = 1
+            return self.__response['data'][0]
+
         else:
             raise StopIteration
