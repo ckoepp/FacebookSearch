@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='FacebookSearch',
-    version='0.0.1',
+    version='0.0.2',
     description='A Python library to easily iterate public information found by the Facebook Graph API',
     url='http://github.com/ckoepp/FacebookSearch',
     author='Christian Koepp, Norbert Wiedermann',

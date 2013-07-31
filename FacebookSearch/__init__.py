@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 __title__ = 'FacebookSearch'
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 __author__ = 'Christian Koepp, Norbert Wiedermann'
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2013 Christian Koepp and Norbert Wiedermann'
