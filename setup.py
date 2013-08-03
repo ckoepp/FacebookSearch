@@ -1,15 +1,25 @@
 from setuptools import setup
 
+def readme():
+    with open('README.md') as f:
+        return f.read()
+
+def requirements():
+    req = []
+    for line in open('requirements.txt','r'):
+        req.append(line.split()[0])
+    return req
+
 setup(
     name='FacebookSearch',
-    version='0.0.2',
+    version='0.0.3',
     description='A Python library to easily iterate public information found by the Facebook Graph API',
     url='http://github.com/ckoepp/FacebookSearch',
     author='Christian Koepp, Norbert Wiedermann',
     author_email='christian.koepp@tum.de',
     license='MIT',
     packages=[ 'FacebookSearch' ],
-    install_requires=[ 'requests' ],
+    install_requires=requirements(),
     classifiers=[
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',

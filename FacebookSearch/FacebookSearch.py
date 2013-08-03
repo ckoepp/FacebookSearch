@@ -152,6 +152,11 @@ class FacebookSearch(object):
             # empty results? FB got it all - it's horrible...
             # see: https://developers.facebook.com/blog/post/478/
             while True:
+
+                # no paging included? We can't go for more results than :(
+                if not self.__response.get('paging'):
+                    raise StopIteration
+
                 last_ts = parse_qs(self.__response['paging']['next'])['until'][0]
                 self.sendQuery(self._search_url + self.__query + '&until=%s' % last_ts)
                 if len(self.__response['data']) > 0:
