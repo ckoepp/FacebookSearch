@@ -89,6 +89,7 @@ class FacebookSearch(object):
 
         except Exception as e:
 
+            print("EXCEPTION!!!")
             # re-raise exception as one of ours, if it was raised because of an json error returned by Graph API
             if isinstance(e, FacebookSearchException):
                 raise e
@@ -124,10 +125,9 @@ class FacebookSearch(object):
 
     def isPreviousPage(self):
         """ Returns true in case there are more results within Graph API or false if there aren't """
-        if self.__response['paging'].get('previous'):
+        if self.__response.get('paging') and self.__response['paging'].get('previous'):
             return True
         return False
-
 
     # Iterator
     def __iter__(self):
@@ -145,25 +145,22 @@ class FacebookSearch(object):
             self.__nextObject += 1
             return self.__response['data'][self.__nextObject-1]
 
-        elif self.isPreviousPage():
-            # Graph Search only supports time-based pagination - don't ask me why
-            # see: https://developers.facebook.com/docs/reference/api/pagination/
+        # Graph Search only supports time-based pagination - don't ask me why
+        # see: https://developers.facebook.com/docs/reference/api/pagination/
 
-            # empty results? FB got it all - it's horrible...
-            # see: https://developers.facebook.com/blog/post/478/
-            while True:
+        # empty results? FB got it all - it's horrible...
+        # see: https://developers.facebook.com/blog/post/478/
+        while self.isPreviousPage():
+            last_ts = parse_qs(self.__response['paging']['next'])['until'][0]
+            self.sendQuery(self._search_url + self.__query + '&until=%s' % last_ts)
 
-                # no paging included? We can't go for more results than :(
-                if not self.__response.get('paging'):
-                    raise StopIteration
+            if len(self.__response['data']) > 0:
+                self.__nextObject = 1
+                return self.__response['data'][0]
 
-                last_ts = parse_qs(self.__response['paging']['next'])['until'][0]
-                self.sendQuery(self._search_url + self.__query + '&until=%s' % last_ts)
-                if len(self.__response['data']) > 0:
-                     break
+            # Sometimes response of Graph API is just "{ data [] }" - this is f*cking stupid behavior of an API. Thanks a lot Facebook!
+            # see: http://stackoverflow.com/questions/13299004/facebook-graph-api-search-returning-empty-data
+            else:
+                break
 
-            self.__nextObject = 1
-            return self.__response['data'][0]
-
-        else:
-            raise StopIteration
+        raise StopIteration
