@@ -24,3 +24,7 @@ try:
 except FacebookSearchException as e:
     print(e)
 ```
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/ckoepp/facebooksearch/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
